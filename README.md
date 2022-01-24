@@ -1,6 +1,6 @@
 # fischerliste
 
-A new Flutter project.
+Final-year CS project. A multi-platform calendar/to-do list
 
 ## Getting Started
 
