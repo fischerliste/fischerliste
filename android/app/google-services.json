@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "952229927180",
+    "firebase_url": "https://fischerliste-7d23c-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "fischerliste-7d23c",
+    "storage_bucket": "fischerliste-7d23c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952229927180:android:27cebecd1fab2e7d9b5129",
+        "android_client_info": {
+          "package_name": "com.fischerliste.fischerliste"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952229927180-2qqqt94mpm484khqhgervsbe00j75g5h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIqpBC1QIlta9l3-WBzgzJLCXx_FSdyW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "952229927180-2qqqt94mpm484khqhgervsbe00j75g5h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
