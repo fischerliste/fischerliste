@@ -1,4 +1,4 @@
-package com.fischerliste.fischerliste.fischerliste
+package com.fischerliste.fischerliste
 
 import io.flutter.embedding.android.FlutterActivity
 

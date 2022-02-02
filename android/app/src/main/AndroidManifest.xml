@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.fischerliste.fischerliste.fischerliste">
+    package="com.fischerliste.fischerliste">
    <application
         android:label="fischerliste"
         android:name="${applicationName}"
