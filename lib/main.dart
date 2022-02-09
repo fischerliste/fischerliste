@@ -3,7 +3,7 @@ import 'message_list.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatelessWidget {
@@ -14,7 +14,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'RayChat',
-      theme: ThemeData(primaryColor: Color(0xFF3D814A)),
+      theme: ThemeData(primaryColor: const Color(0xFF3D814A)),
       home: MessageList(),
     );
   }

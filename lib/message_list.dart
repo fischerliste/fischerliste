@@ -6,8 +6,8 @@ import 'data/message_dao.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 class MessageListState extends State<MessageList> {
-  TextEditingController _messageController = TextEditingController();
-  ScrollController _scrollController = ScrollController();
+  final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class MessageListState extends State<MessageList> {
         title: const Text('RayChat'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             _getMessageList(),
@@ -78,7 +78,7 @@ class MessageListState extends State<MessageList> {
     );
   }
 
-  bool _canSendMessage() => _messageController.text.length > 0;
+  bool _canSendMessage() => _messageController.text.isNotEmpty;
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
