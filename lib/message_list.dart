@@ -14,8 +14,71 @@ class MessageListState extends State<MessageList> {
     WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollToBottom());
 
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.green,
+              ),
+              child: Text(
+                'Drawer Header',
+                style: TextStyle(
+                  color: Colors.grey[800],
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            ListTile(
+              title: const Text('Item 1'),
+              onTap: () {
+                // Update the state of the app.
+                // ...
+              },
+            ),
+            const Divider(
+              indent: 10,
+              endIndent: 10,
+            ),
+            ListTile(
+              title: const Text('Item 2'),
+              onTap: () {
+                // Update the state of the app.
+                // ...
+              },
+            ),
+            const Divider(
+              indent: 10,
+              endIndent: 10,
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
-        title: const Text('RayChat'),
+        title: Center(
+          child: Row(
+            children: [
+              Spacer(flex: 30),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.chevron_left),
+              ),
+              Spacer(flex: 1),
+              Text('Fischerliste'),
+              Spacer(flex: 1),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.chevron_right),
+              ),
+              Spacer(flex: 30),
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+          ),
+        ),
+        backgroundColor: Colors.green,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
