@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'message_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,112 +12,130 @@ class MessageListState extends State<MessageList> {
   final ScrollController _scrollController = ScrollController();
 
   @override
+  void initState() async {
+    final String UID = await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return signinDialog();
+        }) as String;
+    super.initState();
+  }
+
+  signupDialog() {
+    return "UID";
+  }
+
+  signinDialog() {
+    bool checkSignin() {
+      return true;
+    }
+
+    return AlertDialog(
+      title: Text("Please sign in!"),
+      content: Icon(Icons.account_box_outlined),
+      actions: <Widget>[
+        TextButton(
+            onPressed: () {
+              String ID = signupDialog();
+              if (ID != null) {
+                Navigator.pop(context, ID);
+              }
+            },
+            child: Text("Registrieren")),
+        TextButton(
+            onPressed: () {
+              if (checkSignin()) {
+                Navigator.pop(context);
+              }
+            },
+            child: Text("Anmelden")),
+      ],
+    );
+  }
+
+  _showOpenDialog(_) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return signinDialog();
+        }) as String;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollToBottom());
+    //WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollToBottom());
 
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.green,
-              ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.grey[800],
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ListTile(
-              title: const Text('Item 1'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-            const Divider(
-              indent: 10,
-              endIndent: 10,
-            ),
-            ListTile(
-              title: const Text('Item 2'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-            const Divider(
-              indent: 10,
-              endIndent: 10,
-            ),
-          ],
-        ),
-      ),
-      appBar: AppBar(
-        title: Center(
-          child: Row(
+        drawer: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
             children: [
-              Spacer(flex: 30),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.chevron_left),
-              ),
-              Spacer(flex: 1),
-              Text('Fischerliste'),
-              Spacer(flex: 1),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.chevron_right),
-              ),
-              Spacer(flex: 30),
-            ],
-            mainAxisAlignment: MainAxisAlignment.center,
-          ),
-        ),
-        backgroundColor: Colors.green,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _getMessageList(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: TextField(
-                      keyboardType: TextInputType.text,
-                      controller: _messageController,
-                      onChanged: (text) => setState(() {}),
-                      onSubmitted: (input) {
-                        _sendMessage();
-                      },
-                      decoration:
-                          const InputDecoration(hintText: 'Enter new message'),
-                    ),
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                ),
+                child: Text(
+                  'Drawer Header',
+                  style: TextStyle(
+                    color: Colors.grey[800],
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(
-                    icon: Icon(_canSendMessage()
-                        ? CupertinoIcons.arrow_right_circle_fill
-                        : CupertinoIcons.arrow_right_circle),
-                    onPressed: () {
-                      _sendMessage();
-                    })
-              ],
-            ),
-          ],
+              ),
+              ListTile(
+                title: const Text('Item 1'),
+                onTap: () {
+                  // Update the state of the app.
+                  // ...
+                },
+              ),
+              const Divider(
+                indent: 10,
+                endIndent: 10,
+              ),
+              ListTile(
+                title: const Text('Item 2'),
+                onTap: () {
+                  // Update the state of the app.
+                  // ...
+                },
+              ),
+              const Divider(
+                indent: 10,
+                endIndent: 10,
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+        appBar: AppBar(
+          title: Center(
+            child: Row(
+              children: [
+                Spacer(flex: 30),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.chevron_left),
+                ),
+                Spacer(flex: 1),
+                Text('Fischerliste'),
+                Spacer(flex: 1),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.chevron_right),
+                ),
+                Spacer(flex: 30),
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
+            ),
+          ),
+          backgroundColor: Colors.green,
+        ),
+        body: Center(
+          child: Icon(Icons.add_to_queue_sharp),
+        ));
   }
 
   void _sendMessage() {
