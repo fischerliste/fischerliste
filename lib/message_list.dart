@@ -1,23 +1,23 @@
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'message_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'data/message.dart';
 import 'data/message_dao.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class MessageListState extends State<MessageList> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  String? UID;
+  SharedPreferences? prefs;
 
   @override
-  void initState() async {
-    final String UID = await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return signinDialog();
-        }) as String;
+  void initState() {
+    SharedPreferences.getInstance().then((value) => prefs = value);
+    UID = prefs!.getString('UID');
     super.initState();
   }
 
@@ -26,46 +26,45 @@ class MessageListState extends State<MessageList> {
   }
 
   signinDialog() {
+
     bool checkSignin() {
       return true;
     }
 
     return AlertDialog(
-      title: Text("Please sign in!"),
-      content: Icon(Icons.account_box_outlined),
+      title: const Text("Please sign in!"),
+      content: const Icon(Icons.account_box_outlined),
       actions: <Widget>[
         TextButton(
             onPressed: () {
-              String ID = signupDialog();
-              if (ID != null) {
-                Navigator.pop(context, ID);
-              }
+              String id = signupDialog();
+              Navigator.pop(context, id);
             },
-            child: Text("Registrieren")),
+            child: const Text("Registrieren")),
         TextButton(
             onPressed: () {
               if (checkSignin()) {
                 Navigator.pop(context);
               }
             },
-            child: Text("Anmelden")),
+            child: const Text("Anmelden")),
       ],
     );
-  }
-
-  _showOpenDialog(_) {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return signinDialog();
-        }) as String;
   }
 
   @override
   Widget build(BuildContext context) {
     //WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollToBottom());
-
+    if(UID == null){
+      UID = showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return signinDialog();
+          }) as String;
+      prefs!.setString('UID', UID!);
+    }
+    ///@TODO: Add UID checking into build method
     return Scaffold(
         drawer: Drawer(
           child: ListView(
@@ -73,7 +72,7 @@ class MessageListState extends State<MessageList> {
             padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.green,
                 ),
                 child: Text(
@@ -114,26 +113,26 @@ class MessageListState extends State<MessageList> {
           title: Center(
             child: Row(
               children: [
-                Spacer(flex: 30),
+                const Spacer(flex: 30),
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.chevron_left),
+                  icon: const Icon(Icons.chevron_left),
                 ),
-                Spacer(flex: 1),
-                Text('Fischerliste'),
-                Spacer(flex: 1),
+                const Spacer(flex: 1),
+                const Text('Fischerliste'),
+                const Spacer(flex: 1),
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.chevron_right),
+                  icon: const Icon(Icons.chevron_right),
                 ),
-                Spacer(flex: 30),
+                const Spacer(flex: 30),
               ],
               mainAxisAlignment: MainAxisAlignment.center,
             ),
           ),
           backgroundColor: Colors.green,
         ),
-        body: Center(
+        body: const Center(
           child: Icon(Icons.add_to_queue_sharp),
         ));
   }
