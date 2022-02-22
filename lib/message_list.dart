@@ -1,28 +1,24 @@
 //import 'dart:ffi';
 
-import 'message_widget.dart';
+// import 'message_widget.dart';
 import 'package:flutter/material.dart';
-import 'data/message.dart';
+// import 'data/message.dart';
 import 'data/message_dao.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
+// import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageListState extends State<MessageList> {
-  final TextEditingController _messageController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  String? UID;
+  // final TextEditingController _messageController = TextEditingController();
+  // final ScrollController _scrollController = ScrollController();
+  String? uid;
   SharedPreferences? prefs;
 
   @override
   void initState() {
     SharedPreferences.getInstance().then((SharedPreferences? value) {
       prefs = value;
-      UID = prefs!.getString('UID');
+      uid = prefs!.getString('UID');
     });
-    if (prefs == null) {
-      print('PREFNULL!!!!');
-    }
-    //UID = prefs!.getString('UID');
     super.initState();
   }
 
@@ -61,14 +57,14 @@ class MessageListState extends State<MessageList> {
 
 
     //WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollToBottom());
-    if (UID == null) {
-      UID = showDialog(
+    if (uid == null) {
+      uid = showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) {
             return signinDialog();
           }) as String;
-      prefs!.setString('UID', UID!);
+      prefs!.setString('UID', uid!);
     }
 
     ///@TODO: Add Navigator fix for the dialog!
@@ -144,36 +140,36 @@ class MessageListState extends State<MessageList> {
         ));
   }
 
-  void _sendMessage() {
-    if (_canSendMessage()) {
-      final message = Message(_messageController.text, DateTime.now());
-      widget.messageDao.saveMessage(message);
-      _messageController.clear();
-      setState(() {});
-    }
-  }
+  // void _sendMessage() {
+  //   if (_canSendMessage()) {
+  //     final message = Message(_messageController.text, DateTime.now());
+  //     widget.messageDao.saveMessage(message);
+  //     _messageController.clear();
+  //     setState(() {});
+  //   }
+  // }
 
-  Widget _getMessageList() {
-    return Expanded(
-      child: FirebaseAnimatedList(
-        controller: _scrollController,
-        query: widget.messageDao.getMessageQuery(),
-        itemBuilder: (context, snapshot, animation, index) {
-          final json = snapshot.value as Map<dynamic, dynamic>;
-          final message = Message.fromJson(json);
-          return MessageWidget(message.text, message.date);
-        },
-      ),
-    );
-  }
+  // Widget _getMessageList() {
+  //   return Expanded(
+  //     child: FirebaseAnimatedList(
+  //       controller: _scrollController,
+  //       query: widget.messageDao.getMessageQuery(),
+  //       itemBuilder: (context, snapshot, animation, index) {
+  //         final json = snapshot.value as Map<dynamic, dynamic>;
+  //         final message = Message.fromJson(json);
+  //         return MessageWidget(message.text, message.date);
+  //       },
+  //     ),
+  //   );
+  // }
 
-  bool _canSendMessage() => _messageController.text.isNotEmpty;
+  // bool _canSendMessage() => _messageController.text.isNotEmpty;
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    }
-  }
+  // void _scrollToBottom() {
+  //   if (_scrollController.hasClients) {
+  //     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  //   }
+  // }
 }
 
 class MessageList extends StatefulWidget {
