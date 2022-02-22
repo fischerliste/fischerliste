@@ -58,6 +58,8 @@ class MessageListState extends State<MessageList> {
 
   @override
   Widget build(BuildContext context) {
+
+
     //WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollToBottom());
     if (UID == null) {
       UID = showDialog(
@@ -69,7 +71,7 @@ class MessageListState extends State<MessageList> {
       prefs!.setString('UID', UID!);
     }
 
-    ///@TODO: Add UID checking into build method
+    ///@TODO: Add Navigator fix for the dialog!
     return Scaffold(
         drawer: Drawer(
           child: ListView(
