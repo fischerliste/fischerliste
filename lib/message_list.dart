@@ -7,7 +7,6 @@ import 'data/message_dao.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class MessageListState extends State<MessageList> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -16,8 +15,14 @@ class MessageListState extends State<MessageList> {
 
   @override
   void initState() {
-    SharedPreferences.getInstance().then((value) => prefs = value);
-    UID = prefs!.getString('UID');
+    SharedPreferences.getInstance().then((SharedPreferences? value) {
+      prefs = value;
+      UID = prefs!.getString('UID');
+    });
+    if (prefs == null) {
+      print('PREFNULL!!!!');
+    }
+    //UID = prefs!.getString('UID');
     super.initState();
   }
 
@@ -26,7 +31,6 @@ class MessageListState extends State<MessageList> {
   }
 
   signinDialog() {
-
     bool checkSignin() {
       return true;
     }
@@ -55,7 +59,7 @@ class MessageListState extends State<MessageList> {
   @override
   Widget build(BuildContext context) {
     //WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollToBottom());
-    if(UID == null){
+    if (UID == null) {
       UID = showDialog(
           context: context,
           barrierDismissible: false,
@@ -64,6 +68,7 @@ class MessageListState extends State<MessageList> {
           }) as String;
       prefs!.setString('UID', UID!);
     }
+
     ///@TODO: Add UID checking into build method
     return Scaffold(
         drawer: Drawer(
