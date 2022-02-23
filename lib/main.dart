@@ -18,7 +18,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'RayChat',
+      title: 'Fischerliste',
       theme: ThemeData(primaryColor: const Color(0xFF3D814A)),
       home: MessageList(),
     );
