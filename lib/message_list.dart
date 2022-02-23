@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'data/message_dao.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class MessageListState extends State<MessageList> {
   String? uid;
   SharedPreferences? prefs;
+  FirebaseAuth auth =
+      FirebaseAuth.instanceFor(app: Firebase.app('fischerliste'));
 
   @override
   void initState() {
