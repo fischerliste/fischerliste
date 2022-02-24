@@ -16,9 +16,10 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Firebase.initializeApp();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Fischerliste',
+      title: 'fischerliste-7d23c',
       theme: ThemeData(primaryColor: const Color(0xFF3D814A)),
       home: MessageList(),
     );

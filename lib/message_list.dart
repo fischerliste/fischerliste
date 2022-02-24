@@ -31,7 +31,6 @@ class MessageListState extends State<MessageList> {
       });
     }
 
-    ///@TODO: Add Navigator fix for the dialog!
     return Scaffold(
         drawer: Drawer(
           child: ListView(
@@ -106,6 +105,7 @@ class MessageListState extends State<MessageList> {
 }
 
 DialogRoute showSigninPopup(BuildContext buildcontext) {
+  TextEditingController controller = TextEditingController();
   signupDialog() {
     return "UID";
   }
@@ -118,7 +118,19 @@ DialogRoute showSigninPopup(BuildContext buildcontext) {
     builder: (context) {
       return AlertDialog(
         title: const Text("Please sign in!"),
-        content: const Icon(Icons.account_box_outlined),
+        content: Column(
+          children: [
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(labelText: 'Email'),
+            ),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(labelText: 'Passwort'),
+              obscureText: true,
+            ),
+          ],
+        ),
         actions: <Widget>[
           TextButton(
               onPressed: () {
