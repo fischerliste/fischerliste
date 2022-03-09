@@ -6,13 +6,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 class MessageListState extends State<MessageList> {
+  MessageListState({required this.app});
+  FirebaseApp app;
   String? uid;
   SharedPreferences? prefs;
-  FirebaseAuth auth =
-      FirebaseAuth.instanceFor(app: Firebase.app('fischerliste'));
+  late FirebaseAuth auth;
 
   @override
   void initState() {
+    auth = FirebaseAuth.instanceFor(app: app);
     SharedPreferences.getInstance().then((SharedPreferences? value) {
       prefs = value;
       uid = prefs!.getString('UID');
@@ -153,10 +155,10 @@ DialogRoute showSigninPopup(BuildContext buildcontext) {
 }
 
 class MessageList extends StatefulWidget {
-  MessageList({Key? key}) : super(key: key);
-
+  MessageList({Key? key, required this.app}) : super(key: key);
+  final FirebaseApp app;
   final messageDao = MessageDao();
 
   @override
-  MessageListState createState() => MessageListState();
+  MessageListState createState() => MessageListState(app: app);
 }
