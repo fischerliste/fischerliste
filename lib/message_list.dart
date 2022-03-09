@@ -11,6 +11,7 @@ class MessageListState extends State<MessageList> {
   String? uid;
   SharedPreferences? prefs;
   late FirebaseAuth auth;
+  UserCredential? credential;
 
   @override
   void initState() {
@@ -26,9 +27,12 @@ class MessageListState extends State<MessageList> {
   Widget build(BuildContext context) {
     if (uid == null) {
       SchedulerBinding.instance?.addPostFrameCallback((_) {
-        Navigator.of(context).push(showSigninPopup(context)).then((value) {
+        Navigator.of(context)
+            .push(showSigninPopup(context, auth))
+            .then((value) {
+          credential = value;
           prefs!.setString('UID', uid!);
-          return uid = value;
+          return uid = "1234test";
         });
       });
     }
@@ -106,38 +110,71 @@ class MessageListState extends State<MessageList> {
   }
 }
 
-DialogRoute showSigninPopup(BuildContext buildcontext) {
-  TextEditingController controller = TextEditingController();
-  signupDialog() {
-    return "UID";
+DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
+  UserCredential? credential;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  bool createUser() {
+    try {
+      print("------------------------");
+      auth
+          .createUserWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text)
+          .then((UserCredential? value) {
+        print("------------------------");
+        credential = value;
+        print("------------------------");
+
+      });
+    } on Exception catch(exception){
+      print("________________________");
+      print(exception);
+    } on Error catch (error) {
+      print("========================");
+      print(error);
+    }
+    return true;
   }
 
   bool checkSignin() {
+    try {
+      auth
+          .signInWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text)
+          .then((value) {
+        print(value);
+      });
+    } catch (exception) {
+      print(exception);
+    }
     return true;
   }
 
   return DialogRoute(
+    barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
-        title: const Text("Please sign in!"),
+        title: const Text("Bitte anmelden!"),
         content: Column(
           children: [
             TextField(
-              controller: controller,
+              controller: emailController,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
-              controller: controller,
+              controller: passwordController,
               decoration: const InputDecoration(labelText: 'Passwort'),
               obscureText: true,
             ),
           ],
+          mainAxisSize: MainAxisSize.min,
         ),
         actions: <Widget>[
           TextButton(
               onPressed: () {
-                String id = signupDialog();
-                Navigator.pop(context, id);
+                createUser();
+                Navigator.pop(context);
               },
               child: const Text("Registrieren")),
           TextButton(
