@@ -26,9 +26,7 @@ class MessageListState extends State<MessageList> {
   Widget build(BuildContext context) {
     if (uid == null) {
       SchedulerBinding.instance?.addPostFrameCallback((_) {
-        Navigator.of(context)
-            .push(showSigninPopup(context, auth))
-            .then((value) {
+        Navigator.of(context).push(showSigninPopup(context, auth)).then((value) {
           credential = value;
           prefs!.setString('UID', uid!);
           return uid = "1234test";
@@ -114,31 +112,48 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool createUser() {
+  Future<bool> createUser() async {
     try {
-      auth.createUserWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text)
-          .then((UserCredential? value) {
-        credential = value;
-      });
-    } catch (e) {
-      print('==================');
-      print('This never gets executed');
-      print(e);
+      await auth.createUserWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        SnackBar snackBar = const SnackBar(content: Text('Email already in use!'));
+        ScaffoldMessenger.of(buildcontext).showSnackBar(snackBar);
+        return false;
+      }
+      print('Failed with error code: ${e.code}');
+      print(e.message);
     }
     return true;
   }
 
-  bool checkSignin() {
+  Future<bool> checkSignin() async {
     try {
-      auth.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text)
-          .then((value) {
-        print(value);
-      });
-    } catch (exception) {
-      ScaffoldMessenger.of(buildcontext).showSnackBar(SnackBar(content: Text('Email already in use!')));
-      print(exception);
+      await auth.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        SnackBar snackBar = const SnackBar(content: Text('Email already in use!'));
+        ScaffoldMessenger.of(buildcontext).showSnackBar(snackBar);
+        return false;
+      }
+      print('Failed with error code: ${e.code}');
+      print(e.message);
+    } finally {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null && !user.emailVerified) {
+        var actionCodeSettings = ActionCodeSettings(
+          url: 'https://fischerliste-7d23c.web.app/?email=${user.email}',
+          androidPackageName: 'com.fischerliste.fischerliste',
+          androidInstallApp: true,
+          androidMinimumVersion: '8',
+          iOSBundleId: 'com.fischerliste.fischerliste',
+          handleCodeInApp: true,
+        );
+
+        user.sendEmailVerification(actionCodeSettings);
+      }
     }
     return true;
   }
@@ -165,15 +180,20 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
         actions: <Widget>[
           TextButton(
               onPressed: () {
-                createUser();
-                Navigator.pop(context);
+                createUser().then((value) {
+                  if (value) {
+                    Navigator.pop(context);
+                  }
+                });
               },
               child: const Text("Registrieren")),
           TextButton(
               onPressed: () {
-                if (checkSignin()) {
-                  Navigator.pop(context);
-                }
+                checkSignin().then((value) {
+                  if (value) {
+                    Navigator.pop(context);
+                  }
+                });
               },
               child: const Text("Anmelden")),
         ],
@@ -185,7 +205,6 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
 
 class MessageList extends StatefulWidget {
   MessageList({Key? key}) : super(key: key);
-  final messageDao = MessageDao();
 
   @override
   MessageListState createState() => MessageListState();
