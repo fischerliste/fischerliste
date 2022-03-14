@@ -6,16 +6,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 class MessageListState extends State<MessageList> {
-  MessageListState({required this.app});
-  FirebaseApp app;
+  MessageListState();
+  FirebaseApp app = Firebase.app();
   String? uid;
   SharedPreferences? prefs;
-  late FirebaseAuth auth;
+  FirebaseAuth auth = FirebaseAuth.instanceFor(app: Firebase.app());
   UserCredential? credential;
 
   @override
   void initState() {
-    auth = FirebaseAuth.instanceFor(app: app);
     SharedPreferences.getInstance().then((SharedPreferences? value) {
       prefs = value;
       uid = prefs!.getString('UID');
@@ -117,35 +116,28 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
 
   bool createUser() {
     try {
-      print("------------------------");
-      auth
-          .createUserWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text)
+      auth.createUserWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text)
           .then((UserCredential? value) {
-        print("------------------------");
         credential = value;
-        print("------------------------");
-
       });
-    } on Exception catch(exception){
-      print("________________________");
-      print(exception);
-    } on Error catch (error) {
-      print("========================");
-      print(error);
+    } catch (e) {
+      print('==================');
+      print('This never gets executed');
+      print(e);
     }
     return true;
   }
 
   bool checkSignin() {
     try {
-      auth
-          .signInWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text)
+      auth.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text)
           .then((value) {
         print(value);
       });
     } catch (exception) {
+      ScaffoldMessenger.of(buildcontext).showSnackBar(SnackBar(content: Text('Email already in use!')));
       print(exception);
     }
     return true;
@@ -192,10 +184,9 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
 }
 
 class MessageList extends StatefulWidget {
-  MessageList({Key? key, required this.app}) : super(key: key);
-  final FirebaseApp app;
+  MessageList({Key? key}) : super(key: key);
   final messageDao = MessageDao();
 
   @override
-  MessageListState createState() => MessageListState(app: app);
+  MessageListState createState() => MessageListState();
 }

@@ -8,20 +8,20 @@ Future<void> main() async {
   FirebaseApp app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(App(firebaseApp: app,));
+  print("ggggggggggggg");
+  print(app.name);
+  runApp(App());
 }
 
 class App extends StatelessWidget {
-  const App({Key? key, required this.firebaseApp}) : super(key: key);
-  final FirebaseApp firebaseApp;
+  const App({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Firebase.initializeApp();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'fischerliste-7d23c',
       theme: ThemeData(primaryColor: const Color(0xFF3D814A)),
-      home: MessageList(app: firebaseApp),
+      home: MessageList(),
     );
   }
 }
