@@ -1,6 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'dart:core';
 import 'package:flutter/scheduler.dart';
-import 'data/message_dao.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,6 +14,10 @@ class MessageListState extends State<MessageList> {
   SharedPreferences? prefs;
   FirebaseAuth auth = FirebaseAuth.instanceFor(app: Firebase.app());
   UserCredential? credential;
+  DatabaseReference? userRef;
+  DateTime currentDate = DateTime.now();
+  FirebaseDatabase database = FirebaseDatabase.instance;
+  late String date;
 
   @override
   void initState() {
@@ -24,74 +30,88 @@ class MessageListState extends State<MessageList> {
 
   @override
   Widget build(BuildContext context) {
-    if (uid == null) {
+    date = DateFormat('d.M.y').format(currentDate);
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
       SchedulerBinding.instance?.addPostFrameCallback((_) {
         Navigator.of(context).push(showSigninPopup(context, auth)).then((value) {
-          credential = value;
-          prefs!.setString('UID', uid!);
-          return uid = "1234test";
+          userRef = FirebaseDatabase.instance.ref().child(user.uid);
+          prefs!.setString('UID', user.uid);
         });
       });
     }
 
+    String weekNumber =
+        ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round().toString();
+    String week = ' (KW ' + weekNumber + ')';
+    date += week;
+
     return Scaffold(
-        drawer: Drawer(
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: const BoxDecoration(
-                  color: Colors.green,
-                ),
-                child: Text(
-                  'Drawer Header',
-                  style: TextStyle(
-                    color: Colors.grey[800],
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              ListTile(
-                title: const Text('Item 1'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
-              ),
-              const Divider(
-                indent: 10,
-                endIndent: 10,
-              ),
-              ListTile(
-                title: const Text('Item 2'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                },
-              ),
-              const Divider(
-                indent: 10,
-                endIndent: 10,
-              ),
-            ],
-          ),
-        ),
+        // drawer: Drawer(
+        //   child: ListView(
+        //     // Important: Remove any padding from the ListView.
+        //     padding: EdgeInsets.zero,
+        //     children: [
+        //       DrawerHeader(
+        //         decoration: const BoxDecoration(
+        //           color: Colors.green,
+        //         ),
+        //         child: Text(
+        //           'Drawer Header',
+        //           style: TextStyle(
+        //             color: Colors.grey[800],
+        //             fontSize: 25,
+        //             fontWeight: FontWeight.bold,
+        //           ),
+        //         ),
+        //       ),
+        //       ListTile(
+        //         title: const Text('Item 1'),
+        //         onTap: () {
+        //           // Update the state of the app.
+        //           // ...
+        //         },
+        //       ),
+        //       const Divider(
+        //         indent: 10,
+        //         endIndent: 10,
+        //       ),
+        //       ListTile(
+        //         title: const Text('Item 2'),
+        //         onTap: () {
+        //           // Update the state of the app.
+        //           // ...
+        //         },
+        //       ),
+        //       const Divider(
+        //         indent: 10,
+        //         endIndent: 10,
+        //       ),
+        //     ],
+        //   ),
+        // ),
         appBar: AppBar(
           title: Center(
             child: Row(
               children: [
                 const Spacer(flex: 30),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      currentDate = currentDate.subtract(const Duration(days: 7));
+                    });
+                  },
                   icon: const Icon(Icons.chevron_left),
                 ),
                 const Spacer(flex: 1),
-                const Text('Fischerliste'),
+                Text(date),
                 const Spacer(flex: 1),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      currentDate = currentDate.add(const Duration(days: 7));
+                    });
+                  },
                   icon: const Icon(Icons.chevron_right),
                 ),
                 const Spacer(flex: 30),
@@ -101,8 +121,27 @@ class MessageListState extends State<MessageList> {
           ),
           backgroundColor: Colors.green,
         ),
-        body: const Center(
-          child: Icon(Icons.add_to_queue_sharp),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Row(
+              children: [
+                Column(
+                  children: const [
+                   Text('Montag'),
+                    //ListView(),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              children: const [
+                Text('Donnerstag'),
+                //ListView(),
+              ],
+            ),
+          ],
+          mainAxisSize: MainAxisSize.max,
         ));
   }
 }
@@ -118,14 +157,59 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
           email: emailController.text, password: passwordController.text);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        SnackBar snackBar = const SnackBar(content: Text('Email already in use!'));
+        SnackBar snackBar = const SnackBar(
+          content: Text(
+            'Email already in use!',
+            style: TextStyle(fontSize: 20, color: Colors.white70),
+          ),
+        );
         ScaffoldMessenger.of(buildcontext).showSnackBar(snackBar);
         return false;
       }
-      print('Failed with error code: ${e.code}');
-      print(e.message);
+      if (e.code == 'email-already-in-use') {
+        SnackBar snackBar = const SnackBar(content: Text('Email already in use!'));
+        ScaffoldMessenger.of(buildcontext).showSnackBar(snackBar);
+        return false;
+      } else if (e.code == 'weak-password') {
+        SnackBar snackBar = const SnackBar(
+            content: Text(
+          'Weak password! Password must be at least 6 characters long!',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ));
+        ScaffoldMessenger.of(buildcontext).showSnackBar(snackBar);
+        return false;
+      }
     }
-    return true;
+
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return true;
+    } else {
+      return false;
+    }
+
+    ///@TODO: Add email verification!
+    // if (user != null && !user.emailVerified) {
+    //   var actionCodeSettings = ActionCodeSettings(
+    //     url: 'https://fischerliste-7d23c.web.app/?email=${user.email}',
+    //     androidPackageName: 'com.fischerliste.fischerliste',
+    //     androidInstallApp: true,
+    //     androidMinimumVersion: '8',
+    //     iOSBundleId: 'com.fischerliste.fischerliste',
+    //     handleCodeInApp: true,
+    //   );
+    //   user.sendEmailVerification(actionCodeSettings);
+    //   return false;
+    // } else if (user == null) {
+    //   return false;
+    // } else if (user.emailVerified) {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
 
   Future<bool> checkSignin() async {
@@ -133,29 +217,35 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
       await auth.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        SnackBar snackBar = const SnackBar(content: Text('Email already in use!'));
-        ScaffoldMessenger.of(buildcontext).showSnackBar(snackBar);
-        return false;
-      }
-      print('Failed with error code: ${e.code}');
-      print(e.message);
-    } finally {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null && !user.emailVerified) {
-        var actionCodeSettings = ActionCodeSettings(
-          url: 'https://fischerliste-7d23c.web.app/?email=${user.email}',
-          androidPackageName: 'com.fischerliste.fischerliste',
-          androidInstallApp: true,
-          androidMinimumVersion: '8',
-          iOSBundleId: 'com.fischerliste.fischerliste',
-          handleCodeInApp: true,
-        );
-
-        user.sendEmailVerification(actionCodeSettings);
-      }
+      e.message;
     }
-    return true;
+
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return true;
+    } else {
+      return false;
+    }
+
+    ///@TODO: Add email verification!
+    // if (user != null && !user.emailVerified) {
+    //   var actionCodeSettings = ActionCodeSettings(
+    //     url: 'https://fischerliste-7d23c.web.app/?email=${user.email}',
+    //     androidPackageName: 'com.fischerliste.fischerliste',
+    //     androidInstallApp: true,
+    //     androidMinimumVersion: '8',
+    //     iOSBundleId: 'com.fischerliste.fischerliste',
+    //     handleCodeInApp: true,
+    //   );
+    //   user.sendEmailVerification(actionCodeSettings);
+    //   return false;
+    // } else if (user == null) {
+    //   return false;
+    // } else if (user.emailVerified) {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
   }
 
   return DialogRoute(
@@ -204,7 +294,7 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
 }
 
 class MessageList extends StatefulWidget {
-  MessageList({Key? key}) : super(key: key);
+  const MessageList({Key? key}) : super(key: key);
 
   @override
   MessageListState createState() => MessageListState();
