@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:convert';
 
 class MessageListState extends State<MessageList> {
   static const double padding = 8.0;
@@ -40,7 +41,7 @@ class MessageListState extends State<MessageList> {
         final ref = FirebaseDatabase.instance.ref();
         ref.child('/${user!.uid}').get().then((snapshot) {
           if (snapshot.exists) {
-            print(snapshot.value);
+            print(snapshot.value.runtimeType);
           } else {
             ref.update({'/${user.uid}/$year/$weekNumber/$dayKey': toDo});
             print('No data available.');
@@ -49,6 +50,28 @@ class MessageListState extends State<MessageList> {
       } else {
         throw Exception('Invalid Key!');
       }
+    }
+
+    List<dynamic> getListEntry(DateTime date, String dayKey) {
+      if (['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Im'].contains(dayKey)) {
+        int weekNumber = ((int.parse(DateFormat('D').format(date)) + 2.5) / 7).round();
+        int year = int.parse(DateFormat('y').format(date));
+
+        User? user = FirebaseAuth.instance.currentUser;
+        final ref = FirebaseDatabase.instance.ref();
+        ref.child('/${user!.uid}/$year/$weekNumber/$dayKey').get().then((snapshot) {
+          if (snapshot.exists) {
+            return snapshot.value;
+          } else {
+            //ref.update({'/${user.uid}/$year/$weekNumber/$dayKey'});
+            print('No data available.');
+            return [];
+          }
+        });
+      } else {
+        return [];
+      }
+      return [];
     }
 
     date = DateFormat('d.M.y').format(currentDate);
@@ -63,12 +86,14 @@ class MessageListState extends State<MessageList> {
           userRef = FirebaseDatabase.instance.ref().child(user!.uid);
           prefs!.setString('UID', user!.uid);
           print(user);
+          print(getListEntry(currentDate, "Mo"));
         });
       });
     }
 
     String week = ' (KW ' + weekNumber.toString() + ')';
     date += week;
+
 
     return Scaffold(
         // drawer: Drawer(
@@ -159,11 +184,11 @@ class MessageListState extends State<MessageList> {
                       padding:
                           const EdgeInsets.fromLTRB(padding * 2, padding * 2, padding, padding),
                       child: Card(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              ListTile(
                                 title: Center(
                                   child: Text(
                                     'Montag',
@@ -177,8 +202,18 @@ class MessageListState extends State<MessageList> {
                                       color: Colors.grey[800],
                                     )),
                               ),
-                            ),
-                          ],
+                              // ListView.builder(
+                              //   itemCount: getListEntry(currentDate, 'Mo').length,
+                              //   itemBuilder: (context, index) {
+                              //     return Card(
+                              //       child: ListTile(
+                              //         title: Text()
+                              //       ),
+                              //     );
+                              //   },
+                              // ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -187,11 +222,11 @@ class MessageListState extends State<MessageList> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(padding, padding * 2, padding, padding),
                       child: Card(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              ListTile(
                                 title: Center(
                                   child: Text(
                                     'Dienstag',
@@ -205,8 +240,8 @@ class MessageListState extends State<MessageList> {
                                       color: Colors.grey[800],
                                     )),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -215,11 +250,11 @@ class MessageListState extends State<MessageList> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(padding, padding * 2, padding, padding),
                       child: Card(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              ListTile(
                                 title: Center(
                                   child: Text(
                                     'Mittwoch',
@@ -233,8 +268,8 @@ class MessageListState extends State<MessageList> {
                                       color: Colors.grey[800],
                                     )),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -244,11 +279,11 @@ class MessageListState extends State<MessageList> {
                       padding:
                           const EdgeInsets.fromLTRB(padding, padding * 2, padding * 2, padding),
                       child: Card(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              ListTile(
                                 title: Center(
                                   child: Text(
                                     'Merk ich mir!',
@@ -262,8 +297,8 @@ class MessageListState extends State<MessageList> {
                                       color: Colors.grey[800],
                                     )),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -281,11 +316,11 @@ class MessageListState extends State<MessageList> {
                       padding:
                           const EdgeInsets.fromLTRB(padding * 2, padding, padding, padding * 2),
                       child: Card(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              ListTile(
                                 title: Center(
                                   child: Text(
                                     'Donnerstag',
@@ -299,8 +334,8 @@ class MessageListState extends State<MessageList> {
                                       color: Colors.grey[800],
                                     )),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -309,11 +344,11 @@ class MessageListState extends State<MessageList> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(padding, padding, padding, padding * 2),
                       child: Card(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              ListTile(
                                 title: Center(
                                   child: Text(
                                     'Freitag',
@@ -327,8 +362,8 @@ class MessageListState extends State<MessageList> {
                                       color: Colors.grey[800],
                                     )),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -337,11 +372,11 @@ class MessageListState extends State<MessageList> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(padding, padding, padding, padding * 2),
                       child: Card(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              ListTile(
                                 title: Center(
                                   child: Text(
                                     'Samstag',
@@ -355,8 +390,8 @@ class MessageListState extends State<MessageList> {
                                       color: Colors.grey[800],
                                     )),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -366,11 +401,11 @@ class MessageListState extends State<MessageList> {
                       padding:
                           const EdgeInsets.fromLTRB(padding, padding, padding * 2, padding * 2),
                       child: Card(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              ListTile(
                                 title: Center(
                                   child: Text(
                                     'Sonntag',
@@ -384,8 +419,8 @@ class MessageListState extends State<MessageList> {
                                       color: Colors.grey[800],
                                     )),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
