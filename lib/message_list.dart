@@ -163,14 +163,19 @@ class MessageListState extends State<MessageList> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text(
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
                                     'Montag',
                                     style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
                                   ),
-                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
-                                ],
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Colors.grey[800],
+                                    )),
                               ),
                             ),
                           ],
@@ -186,14 +191,19 @@ class MessageListState extends State<MessageList> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text(
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
                                     'Dienstag',
                                     style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
                                   ),
-                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
-                                ],
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Colors.grey[800],
+                                    )),
                               ),
                             ),
                           ],
@@ -209,14 +219,19 @@ class MessageListState extends State<MessageList> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text(
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
                                     'Mittwoch',
                                     style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
                                   ),
-                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
-                                ],
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Colors.grey[800],
+                                    )),
                               ),
                             ),
                           ],
@@ -233,14 +248,19 @@ class MessageListState extends State<MessageList> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text(
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
                                     'Merk ich mir!',
                                     style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
                                   ),
-                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
-                                ],
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Colors.grey[800],
+                                    )),
                               ),
                             ),
                           ],
@@ -265,14 +285,19 @@ class MessageListState extends State<MessageList> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text(
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
                                     'Donnerstag',
                                     style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
                                   ),
-                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
-                                ],
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Colors.grey[800],
+                                    )),
                               ),
                             ),
                           ],
@@ -288,14 +313,19 @@ class MessageListState extends State<MessageList> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text(
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
                                     'Freitag',
                                     style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
                                   ),
-                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
-                                ],
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Colors.grey[800],
+                                    )),
                               ),
                             ),
                           ],
@@ -311,14 +341,19 @@ class MessageListState extends State<MessageList> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text(
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
                                     'Samstag',
                                     style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
                                   ),
-                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
-                                ],
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Colors.grey[800],
+                                    )),
                               ),
                             ),
                           ],
@@ -335,14 +370,19 @@ class MessageListState extends State<MessageList> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Text(
+                              child: ListTile(
+                                title: Center(
+                                  child: Text(
                                     'Sonntag',
                                     style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
                                   ),
-                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
-                                ],
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: Colors.grey[800],
+                                    )),
                               ),
                             ),
                           ],
