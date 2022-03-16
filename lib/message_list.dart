@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 class MessageListState extends State<MessageList> {
+  static const double padding = 8.0;
   MessageListState();
   FirebaseApp app = Firebase.app();
   String? uid;
@@ -30,20 +31,43 @@ class MessageListState extends State<MessageList> {
 
   @override
   Widget build(BuildContext context) {
+    void createListEntry(DateTime date, String toDo, String dayKey) {
+      if (['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Im'].contains(dayKey)) {
+        int weekNumber = ((int.parse(DateFormat('D').format(date)) + 2.5) / 7).round();
+        int year = int.parse(DateFormat('y').format(date));
+
+        User? user = FirebaseAuth.instance.currentUser;
+        final ref = FirebaseDatabase.instance.ref();
+        ref.child('/${user!.uid}').get().then((snapshot) {
+          if (snapshot.exists) {
+            print(snapshot.value);
+          } else {
+            ref.update({'/${user.uid}/$year/$weekNumber/$dayKey': toDo});
+            print('No data available.');
+          }
+        });
+      } else {
+        throw Exception('Invalid Key!');
+      }
+    }
+
     date = DateFormat('d.M.y').format(currentDate);
+    int weekNumber = ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round();
     User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
+
+    if (user == null) {
+      print('hello');
       SchedulerBinding.instance?.addPostFrameCallback((_) {
         Navigator.of(context).push(showSigninPopup(context, auth)).then((value) {
-          userRef = FirebaseDatabase.instance.ref().child(user.uid);
-          prefs!.setString('UID', user.uid);
+          user = FirebaseAuth.instance.currentUser;
+          userRef = FirebaseDatabase.instance.ref().child(user!.uid);
+          prefs!.setString('UID', user!.uid);
+          print(user);
         });
       });
     }
 
-    String weekNumber =
-        ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round().toString();
-    String week = ' (KW ' + weekNumber + ')';
+    String week = ' (KW ' + weekNumber.toString() + ')';
     date += week;
 
     return Scaffold(
@@ -121,24 +145,213 @@ class MessageListState extends State<MessageList> {
           ),
           backgroundColor: Colors.green,
         ),
+        backgroundColor: Colors.grey[100],
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Row(
-              children: [
-                Column(
-                  children: const [
-                   Text('Montag'),
-                    //ListView(),
-                  ],
-                ),
-              ],
+            Expanded(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(padding * 2, padding * 2, padding, padding),
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Montag',
+                                    style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
+                                  ),
+                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(padding, padding * 2, padding, padding),
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Dienstag',
+                                    style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
+                                  ),
+                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(padding, padding * 2, padding, padding),
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Mittwoch',
+                                    style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
+                                  ),
+                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(padding, padding * 2, padding * 2, padding),
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Merk ich mir!',
+                                    style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
+                                  ),
+                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Row(
-              children: const [
-                Text('Donnerstag'),
-                //ListView(),
-              ],
+            Expanded(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(padding * 2, padding, padding, padding * 2),
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Donnerstag',
+                                    style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
+                                  ),
+                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(padding, padding, padding, padding * 2),
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Freitag',
+                                    style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
+                                  ),
+                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(padding, padding, padding, padding * 2),
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Samstag',
+                                    style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
+                                  ),
+                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(padding, padding, padding * 2, padding * 2),
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Sonntag',
+                                    style: TextStyle(fontSize: 26.0, color: Colors.grey[800]),
+                                  ),
+                                  IconButton(onPressed: () {}, icon: Icon(Icons.add, color: Colors.grey[800],)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
           mainAxisSize: MainAxisSize.max,
@@ -147,7 +360,6 @@ class MessageListState extends State<MessageList> {
 }
 
 DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
-  UserCredential? credential;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
