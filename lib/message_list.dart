@@ -6,7 +6,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'dart:convert';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 class ToDoListState extends State<ToDoList> {
@@ -20,14 +19,14 @@ class ToDoListState extends State<ToDoList> {
   DateTime currentDate = DateTime.now();
   FirebaseDatabase database = FirebaseDatabase.instance;
   late String date;
-  ScrollController _moScrollController = ScrollController();
-  ScrollController _tuScrollController = ScrollController();
-  ScrollController _weScrollController = ScrollController();
-  ScrollController _thScrollController = ScrollController();
-  ScrollController _imScrollController = ScrollController();
-  ScrollController _frScrollController = ScrollController();
-  ScrollController _saScrollController = ScrollController();
-  ScrollController _suScrollController = ScrollController();
+  final ScrollController _moScrollController = ScrollController();
+  final ScrollController _tuScrollController = ScrollController();
+  final ScrollController _weScrollController = ScrollController();
+  final ScrollController _thScrollController = ScrollController();
+  final ScrollController _imScrollController = ScrollController();
+  final ScrollController _frScrollController = ScrollController();
+  final ScrollController _saScrollController = ScrollController();
+  final ScrollController _suScrollController = ScrollController();
 
   @override
   void initState() {
@@ -45,12 +44,10 @@ class ToDoListState extends State<ToDoList> {
     User? user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      print('hello');
       SchedulerBinding.instance?.addPostFrameCallback((_) {
         Navigator.of(context).push(showSigninPopup(context, auth)).then((value) {
           user = FirebaseAuth.instance.currentUser;
           prefs!.setString('UID', user!.uid);
-          print(user);
           setState(() {});
           // SchedulerBinding.instance?.scheduleForcedFrame();
         });
@@ -164,7 +161,6 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    print(message);
                                     if (message != null) {
                                       widget.toDoDao.saveEntry(currentDate, 'Mo', message);
                                     }
@@ -183,8 +179,6 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Mo'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  print(json);
-                                  print(json.runtimeType);
                                   return ToDoEntry(json, index);
                                 },
                               ),
@@ -214,7 +208,6 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    print(message);
                                     if (message != null) {
                                       widget.toDoDao.saveEntry(currentDate, 'Tu', message);
                                     }
@@ -229,12 +222,10 @@ class ToDoListState extends State<ToDoList> {
                               child: FirebaseAnimatedList(
                                 key: UniqueKey(),
                                 shrinkWrap: true,
-                                controller: _weScrollController,
+                                controller: _tuScrollController,
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Tu'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  print(json);
-                                  print(json.runtimeType);
                                   return ToDoEntry(json, index);
                                 },
                               ),
@@ -264,7 +255,6 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    print(message);
                                     if (message != null) {
                                       widget.toDoDao.saveEntry(currentDate, 'We', message);
                                     }
@@ -283,8 +273,6 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'We'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  print(json);
-                                  print(json.runtimeType);
                                   return ToDoEntry(json, index);
                                 },
                               ),
@@ -314,7 +302,6 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    print(message);
                                     if (message != null) {
                                       widget.toDoDao.saveEntry(currentDate, 'Im', message);
                                     }
@@ -333,8 +320,6 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Im'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  print(json);
-                                  print(json.runtimeType);
                                   return ToDoEntry(json, index);
                                 },
                               ),
@@ -372,7 +357,6 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    print(message);
                                     if (message != null) {
                                       widget.toDoDao.saveEntry(currentDate, 'Th', message);
                                     }
@@ -391,8 +375,6 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Th'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  print(json);
-                                  print(json.runtimeType);
                                   return ToDoEntry(json, index);
                                 },
                               ),
@@ -422,7 +404,6 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    print(message);
                                     if (message != null) {
                                       widget.toDoDao.saveEntry(currentDate, 'Fr', message);
                                     }
@@ -441,8 +422,6 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Fr'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  print(json);
-                                  print(json.runtimeType);
                                   return ToDoEntry(json, index);
                                 },
                               ),
@@ -472,7 +451,6 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    print(message);
                                     if (message != null) {
                                       widget.toDoDao.saveEntry(currentDate, 'Sa', message);
                                     }
@@ -491,8 +469,6 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Sa'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  print(json);
-                                  print(json.runtimeType);
                                   return ToDoEntry(json, index);
                                 },
                               ),
@@ -522,7 +498,6 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    print(message);
                                     if (message != null) {
                                       widget.toDoDao.saveEntry(currentDate, 'Su', message);
                                     }
@@ -541,8 +516,6 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Su'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  print(json);
-                                  print(json.runtimeType);
                                   return ToDoEntry(json, index);
                                 },
                               ),
@@ -767,20 +740,17 @@ class ToDoDao {
     User? user = FirebaseAuth.instance.currentUser;
     int year = int.parse(DateFormat('y').format(datetime));
     if (user != null) {
-      print(FirebaseDatabase.instance.ref().child('/${user.uid}/$year/$weekNumber/$dayKey'));
       return FirebaseDatabase.instance.ref().child('/${user.uid}/$year/$weekNumber/$dayKey');
     }
     return FirebaseDatabase.instance.ref().child('NullUser');
   }
 }
 
+// ignore: must_be_immutable
 class ToDoEntry extends StatefulWidget {
   late String message;
   late int index;
-  ToDoEntry(String message, int index) {
-    this.message = message;
-    this.index = index;
-  }
+  ToDoEntry(this.message, this.index, {Key? key}) : super(key: key);
 
   @override
   State<ToDoEntry> createState() => _ToDoEntryState();
