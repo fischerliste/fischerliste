@@ -19,7 +19,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'fischerliste-7d23c',
       theme: ThemeData(primaryColor: const Color(0xFF3D814A)),
-      home: MessageList(),
+      home: ToDoList(),
     );
   }
 }

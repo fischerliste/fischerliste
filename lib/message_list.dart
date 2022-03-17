@@ -9,9 +9,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'dart:convert';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 
-class MessageListState extends State<MessageList> {
+class ToDoListState extends State<ToDoList> {
   static const double padding = 8.0;
-  MessageListState();
+  ToDoListState();
   FirebaseApp app = Firebase.app();
   String? uid;
   SharedPreferences? prefs;
@@ -166,7 +166,7 @@ class MessageListState extends State<MessageList> {
                                     String? message = await _showMyDialog();
                                     print(message);
                                     if (message != null) {
-                                      widget.messageDao.saveMessage(currentDate, 'Mo', message);
+                                      widget.toDoDao.saveEntry(currentDate, 'Mo', message);
                                     }
                                   },
                                   icon: Icon(
@@ -180,7 +180,7 @@ class MessageListState extends State<MessageList> {
                                 key: UniqueKey(),
                                 shrinkWrap: true,
                                 controller: _moScrollController,
-                                query: widget.messageDao.getMessageQuery(currentDate, 'Mo'),
+                                query: widget.toDoDao.getToDoEntries(currentDate, 'Mo'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
                                   print(json);
@@ -216,7 +216,7 @@ class MessageListState extends State<MessageList> {
                                     String? message = await _showMyDialog();
                                     print(message);
                                     if (message != null) {
-                                      widget.messageDao.saveMessage(currentDate, 'Tu', message);
+                                      widget.toDoDao.saveEntry(currentDate, 'Tu', message);
                                     }
                                   },
                                   icon: Icon(
@@ -229,8 +229,8 @@ class MessageListState extends State<MessageList> {
                               child: FirebaseAnimatedList(
                                 key: UniqueKey(),
                                 shrinkWrap: true,
-                                controller: _tuScrollController,
-                                query: widget.messageDao.getMessageQuery(currentDate, 'Tu '),
+                                controller: _weScrollController,
+                                query: widget.toDoDao.getToDoEntries(currentDate, 'Tu'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
                                   print(json);
@@ -266,7 +266,7 @@ class MessageListState extends State<MessageList> {
                                     String? message = await _showMyDialog();
                                     print(message);
                                     if (message != null) {
-                                      widget.messageDao.saveMessage(currentDate, 'We', message);
+                                      widget.toDoDao.saveEntry(currentDate, 'We', message);
                                     }
                                   },
                                   icon: Icon(
@@ -280,7 +280,7 @@ class MessageListState extends State<MessageList> {
                                 key: UniqueKey(),
                                 shrinkWrap: true,
                                 controller: _weScrollController,
-                                query: widget.messageDao.getMessageQuery(currentDate, 'We'),
+                                query: widget.toDoDao.getToDoEntries(currentDate, 'We'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
                                   print(json);
@@ -316,7 +316,7 @@ class MessageListState extends State<MessageList> {
                                     String? message = await _showMyDialog();
                                     print(message);
                                     if (message != null) {
-                                      widget.messageDao.saveMessage(currentDate, 'Im', message);
+                                      widget.toDoDao.saveEntry(currentDate, 'Im', message);
                                     }
                                   },
                                   icon: Icon(
@@ -330,7 +330,7 @@ class MessageListState extends State<MessageList> {
                                 key: UniqueKey(),
                                 shrinkWrap: true,
                                 controller: _imScrollController,
-                                query: widget.messageDao.getMessageQuery(currentDate, 'Im'),
+                                query: widget.toDoDao.getToDoEntries(currentDate, 'Im'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
                                   print(json);
@@ -374,7 +374,7 @@ class MessageListState extends State<MessageList> {
                                     String? message = await _showMyDialog();
                                     print(message);
                                     if (message != null) {
-                                      widget.messageDao.saveMessage(currentDate, 'Th', message);
+                                      widget.toDoDao.saveEntry(currentDate, 'Th', message);
                                     }
                                   },
                                   icon: Icon(
@@ -388,7 +388,7 @@ class MessageListState extends State<MessageList> {
                                 key: UniqueKey(),
                                 shrinkWrap: true,
                                 controller: _thScrollController,
-                                query: widget.messageDao.getMessageQuery(currentDate, 'Th'),
+                                query: widget.toDoDao.getToDoEntries(currentDate, 'Th'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
                                   print(json);
@@ -424,7 +424,7 @@ class MessageListState extends State<MessageList> {
                                     String? message = await _showMyDialog();
                                     print(message);
                                     if (message != null) {
-                                      widget.messageDao.saveMessage(currentDate, 'Fr', message);
+                                      widget.toDoDao.saveEntry(currentDate, 'Fr', message);
                                     }
                                   },
                                   icon: Icon(
@@ -438,7 +438,7 @@ class MessageListState extends State<MessageList> {
                                 key: UniqueKey(),
                                 shrinkWrap: true,
                                 controller: _frScrollController,
-                                query: widget.messageDao.getMessageQuery(currentDate, 'Fr'),
+                                query: widget.toDoDao.getToDoEntries(currentDate, 'Fr'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
                                   print(json);
@@ -474,7 +474,7 @@ class MessageListState extends State<MessageList> {
                                     String? message = await _showMyDialog();
                                     print(message);
                                     if (message != null) {
-                                      widget.messageDao.saveMessage(currentDate, 'Sa', message);
+                                      widget.toDoDao.saveEntry(currentDate, 'Sa', message);
                                     }
                                   },
                                   icon: Icon(
@@ -488,7 +488,7 @@ class MessageListState extends State<MessageList> {
                                 key: UniqueKey(),
                                 shrinkWrap: true,
                                 controller: _saScrollController,
-                                query: widget.messageDao.getMessageQuery(currentDate, 'Sa'),
+                                query: widget.toDoDao.getToDoEntries(currentDate, 'Sa'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
                                   print(json);
@@ -524,7 +524,7 @@ class MessageListState extends State<MessageList> {
                                     String? message = await _showMyDialog();
                                     print(message);
                                     if (message != null) {
-                                      widget.messageDao.saveMessage(currentDate, 'Su', message);
+                                      widget.toDoDao.saveEntry(currentDate, 'Su', message);
                                     }
                                   },
                                   icon: Icon(
@@ -538,7 +538,7 @@ class MessageListState extends State<MessageList> {
                                 key: UniqueKey(),
                                 shrinkWrap: true,
                                 controller: _suScrollController,
-                                query: widget.messageDao.getMessageQuery(currentDate, 'Su'),
+                                query: widget.toDoDao.getToDoEntries(currentDate, 'Su'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
                                   print(json);
@@ -582,7 +582,7 @@ class MessageListState extends State<MessageList> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Approve'),
+              child: const Text('Bestätigen'),
               onPressed: () {
                 Navigator.of(context).pop(textcontroller.text);
               },
@@ -740,16 +740,16 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
   );
 }
 
-class MessageList extends StatefulWidget {
-  MessageList({Key? key}) : super(key: key);
-  final messageDao = MessageDao();
+class ToDoList extends StatefulWidget {
+  ToDoList({Key? key}) : super(key: key);
+  final toDoDao = ToDoDao();
 
   @override
-  MessageListState createState() => MessageListState();
+  ToDoListState createState() => ToDoListState();
 }
 
-class MessageDao {
-  void saveMessage(DateTime date, String dayKey, String message) {
+class ToDoDao {
+  void saveEntry(DateTime date, String dayKey, String message) {
     int weekNumber = ((int.parse(DateFormat('D').format(date)) + 2.5) / 7).round();
     User? user = FirebaseAuth.instance.currentUser;
     int year = int.parse(DateFormat('y').format(date));
@@ -762,7 +762,7 @@ class MessageDao {
     }
   }
 
-  Query getMessageQuery(DateTime datetime, String dayKey) {
+  Query getToDoEntries(DateTime datetime, String dayKey) {
     int weekNumber = ((int.parse(DateFormat('D').format(datetime)) + 2.5) / 7).round();
     User? user = FirebaseAuth.instance.currentUser;
     int year = int.parse(DateFormat('y').format(datetime));
@@ -774,19 +774,53 @@ class MessageDao {
   }
 }
 
-class ToDoEntry extends StatelessWidget {
-  final String message;
-  final int index;
+class ToDoEntry extends StatefulWidget {
+  late String message;
+  late int index;
+  ToDoEntry(String message, int index) {
+    this.message = message;
+    this.index = index;
+  }
 
-  ToDoEntry(this.message, this.index);
+  @override
+  State<ToDoEntry> createState() => _ToDoEntryState();
+}
+
+class _ToDoEntryState extends State<ToDoEntry> {
+  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Colors.blue;
+      }
+      return Colors.red;
+    }
+
     return Padding(
       padding: const EdgeInsets.only(left: 1, top: 5, right: 1, bottom: 2),
       child: Card(
         child: ListTile(
-          title: Text(message),
+          leading: Checkbox(
+
+            checkColor: Colors.white,
+            fillColor: MaterialStateProperty.resolveWith(getColor),
+            value: isChecked,
+            onChanged: (bool? value) {
+              setState(() {
+                isChecked = value!;
+                if(isChecked){
+                }
+              });
+            },
+          ),
+          title: Text(widget.message),
         ),
       ),
     );
