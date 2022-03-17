@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:convert';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 class MessageListState extends State<MessageList> {
   static const double padding = 8.0;
@@ -16,10 +17,10 @@ class MessageListState extends State<MessageList> {
   SharedPreferences? prefs;
   FirebaseAuth auth = FirebaseAuth.instanceFor(app: Firebase.app());
   UserCredential? credential;
-  DatabaseReference? userRef;
   DateTime currentDate = DateTime.now();
   FirebaseDatabase database = FirebaseDatabase.instance;
   late String date;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -32,48 +33,6 @@ class MessageListState extends State<MessageList> {
 
   @override
   Widget build(BuildContext context) {
-    void createListEntry(DateTime date, String toDo, String dayKey) {
-      if (['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Im'].contains(dayKey)) {
-        int weekNumber = ((int.parse(DateFormat('D').format(date)) + 2.5) / 7).round();
-        int year = int.parse(DateFormat('y').format(date));
-
-        User? user = FirebaseAuth.instance.currentUser;
-        final ref = FirebaseDatabase.instance.ref();
-        ref.child('/${user!.uid}').get().then((snapshot) {
-          if (snapshot.exists) {
-            print(snapshot.value.runtimeType);
-          } else {
-            ref.update({'/${user.uid}/$year/$weekNumber/$dayKey': toDo});
-            print('No data available.');
-          }
-        });
-      } else {
-        throw Exception('Invalid Key!');
-      }
-    }
-
-    List<dynamic> getListEntry(DateTime date, String dayKey) {
-      if (['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su', 'Im'].contains(dayKey)) {
-        int weekNumber = ((int.parse(DateFormat('D').format(date)) + 2.5) / 7).round();
-        int year = int.parse(DateFormat('y').format(date));
-
-        User? user = FirebaseAuth.instance.currentUser;
-        final ref = FirebaseDatabase.instance.ref();
-        ref.child('/${user!.uid}/$year/$weekNumber/$dayKey').get().then((snapshot) {
-          if (snapshot.exists) {
-            return snapshot.value;
-          } else {
-            //ref.update({'/${user.uid}/$year/$weekNumber/$dayKey'});
-            print('No data available.');
-            return [];
-          }
-        });
-      } else {
-        return [];
-      }
-      return [];
-    }
-
     date = DateFormat('d.M.y').format(currentDate);
     int weekNumber = ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round();
     User? user = FirebaseAuth.instance.currentUser;
@@ -83,17 +42,16 @@ class MessageListState extends State<MessageList> {
       SchedulerBinding.instance?.addPostFrameCallback((_) {
         Navigator.of(context).push(showSigninPopup(context, auth)).then((value) {
           user = FirebaseAuth.instance.currentUser;
-          userRef = FirebaseDatabase.instance.ref().child(user!.uid);
           prefs!.setString('UID', user!.uid);
           print(user);
-          print(getListEntry(currentDate, "Mo"));
+          setState(() {});
+          // SchedulerBinding.instance?.scheduleForcedFrame();
         });
       });
     }
 
     String week = ' (KW ' + weekNumber.toString() + ')';
     date += week;
-
 
     return Scaffold(
         // drawer: Drawer(
@@ -168,7 +126,7 @@ class MessageListState extends State<MessageList> {
               mainAxisAlignment: MainAxisAlignment.center,
             ),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.lightGreen,
         ),
         backgroundColor: Colors.grey[100],
         body: Column(
@@ -180,10 +138,12 @@ class MessageListState extends State<MessageList> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
+                    flex: 1,
                     child: Padding(
                       padding:
                           const EdgeInsets.fromLTRB(padding * 2, padding * 2, padding, padding),
                       child: Card(
+                        color: Colors.green,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
@@ -202,16 +162,22 @@ class MessageListState extends State<MessageList> {
                                       color: Colors.grey[800],
                                     )),
                               ),
-                              // ListView.builder(
-                              //   itemCount: getListEntry(currentDate, 'Mo').length,
-                              //   itemBuilder: (context, index) {
-                              //     return Card(
-                              //       child: ListTile(
-                              //         title: Text()
-                              //       ),
-                              //     );
-                              //   },
-                              // ),
+                              Expanded(
+                                flex: 1,
+                                child: FirebaseAnimatedList(
+                                  key: UniqueKey(),
+                                  shrinkWrap: true,
+                                  controller: _scrollController,
+                                  query: widget.messageDao.getMessageQuery(currentDate, 'Mo'),
+                                  itemBuilder: (context, snapshot, animation, index) {
+                                    dynamic json = snapshot.value;
+                                    print(json);
+                                    print(json.runtimeType);
+                                    final message = Message.fromJson(json);
+                                    return MessageWidget(message.text);
+                                  },
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -581,8 +547,57 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
 }
 
 class MessageList extends StatefulWidget {
-  const MessageList({Key? key}) : super(key: key);
+  MessageList({Key? key}) : super(key: key);
+  final messageDao = MessageDao();
 
   @override
   MessageListState createState() => MessageListState();
+}
+
+class MessageDao {
+  final DatabaseReference _messagesRef = FirebaseDatabase.instance.ref().child('messages');
+
+  void saveMessage(Message message) {
+    _messagesRef.push().set(message.toJson());
+  }
+
+  Query getMessageQuery(DateTime datetime, String dateKey) {
+    int weekNumber = ((int.parse(DateFormat('D').format(datetime)) + 2.5) / 7).round();
+    User? user = FirebaseAuth.instance.currentUser;
+    int year = int.parse(DateFormat('y').format(datetime));
+    if (user != null) {
+      return FirebaseDatabase.instance.ref().child('/${user.uid}/$year/$weekNumber/$dateKey');
+    }
+    return FirebaseDatabase.instance.ref().child('NullUser');
+  }
+}
+
+class MessageWidget extends StatelessWidget {
+  final String message;
+
+  MessageWidget(this.message);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 1, top: 5, right: 1, bottom: 2),
+      child: Card(
+        child: ListTile(
+          title: Text(message),
+        ),
+      ),
+    );
+  }
+}
+
+class Message {
+  final String text;
+
+  Message(this.text);
+
+  Message.fromJson(String json) : text = json;
+
+  Map<dynamic, dynamic> toJson() => <dynamic, dynamic>{
+        'text': text,
+      };
 }
