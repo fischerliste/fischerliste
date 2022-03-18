@@ -39,7 +39,9 @@ class ToDoListState extends State<ToDoList> {
 
   @override
   Widget build(BuildContext context) {
+
     date = DateFormat('d.M.y').format(currentDate);
+
     int weekNumber = ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round();
     User? user = FirebaseAuth.instance.currentUser;
 
@@ -536,6 +538,8 @@ class ToDoListState extends State<ToDoList> {
   }
 
   Future<String?> _showMyDialog() async {
+    ///@TODO: Add empty string checking
+
     TextEditingController textcontroller = TextEditingController();
     return showDialog<String>(
       context: context,
@@ -637,7 +641,8 @@ DialogRoute showSigninPopup(BuildContext buildcontext, FirebaseAuth auth) {
       await auth.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
     } on FirebaseAuthException catch (e) {
-      e.message;
+      //@TODO: incorrect password
+      print(e.message);
     }
 
     User? user = FirebaseAuth.instance.currentUser;
@@ -791,6 +796,10 @@ class _ToDoEntryState extends State<ToDoEntry> {
             },
           ),
           title: Text(widget.message),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: (){},
+          )
         ),
       ),
     );
