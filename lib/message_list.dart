@@ -562,7 +562,7 @@ class ToDoListState extends State<ToDoList> {
               value: isChecked,
               onChanged: (bool? value) async {
                 int weekNumber =
-                    ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round();
+                ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round();
                 User? user = FirebaseAuth.instance.currentUser;
                 int year = int.parse(DateFormat('y').format(currentDate));
                 final snapshot = await FirebaseDatabase.instance
@@ -588,7 +588,26 @@ class ToDoListState extends State<ToDoList> {
             ),
             trailing: IconButton(
               icon: const Icon(Icons.delete),
-              onPressed: () {},
+              onPressed: () async {
+                int weekNumber =
+                ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round();
+                User? user = FirebaseAuth.instance.currentUser;
+                int year = int.parse(DateFormat('y').format(currentDate));
+                final snapshot = await FirebaseDatabase.instance
+                    .ref()
+                    .child('/${user?.uid}/$year/$weekNumber/$dayKey')
+                    .get();
+                Map<String, dynamic> json1 = snapshot.value as Map<String, dynamic>;
+                setState(() {
+                  if (user != null) {
+                    String key = json1.keys.toList()[index];
+                    FirebaseDatabase.instance
+                        .ref()
+                        .child('/${user.uid}/$year/$weekNumber/$dayKey/$key/')
+                        .remove();
+                  }
+                });
+              },
             )),
       ),
     );
