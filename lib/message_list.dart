@@ -211,7 +211,7 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    if () {
+                                    if (message != null && message.trim().length != 0) {
                                       widget.toDoDao.saveEntry(currentDate, 'Tu', message.trim());
                                     }
                                   },
