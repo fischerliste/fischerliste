@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +41,6 @@ class ToDoListState extends State<ToDoList> {
 
   @override
   Widget build(BuildContext context) {
-
     date = DateFormat('d.M.y').format(currentDate);
 
     int weekNumber = ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round();
@@ -181,7 +182,7 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Mo'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  return ToDoEntry(json, index);
+                                  return toDoEntry(json, index, 'Mo', currentDate);
                                 },
                               ),
                             ),
@@ -228,7 +229,7 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Tu'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  return ToDoEntry(json, index);
+                                  return toDoEntry(json, index, 'Tu', currentDate);
                                 },
                               ),
                             ),
@@ -275,7 +276,7 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'We'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  return ToDoEntry(json, index);
+                                  return toDoEntry(json, index, 'We', currentDate);
                                 },
                               ),
                             ),
@@ -322,7 +323,7 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Im'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  return ToDoEntry(json, index);
+                                  return toDoEntry(json, index, 'Im', currentDate);
                                 },
                               ),
                             ),
@@ -377,7 +378,7 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Th'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  return ToDoEntry(json, index);
+                                  return toDoEntry(json, index, 'Th', currentDate);
                                 },
                               ),
                             ),
@@ -424,7 +425,7 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Fr'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  return ToDoEntry(json, index);
+                                  return toDoEntry(json, index, 'Fr', currentDate);
                                 },
                               ),
                             ),
@@ -471,7 +472,7 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Sa'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  return ToDoEntry(json, index);
+                                  return toDoEntry(json, index, 'Sa', currentDate);
                                 },
                               ),
                             ),
@@ -518,7 +519,7 @@ class ToDoListState extends State<ToDoList> {
                                 query: widget.toDoDao.getToDoEntries(currentDate, 'Su'),
                                 itemBuilder: (context, snapshot, animation, index) {
                                   dynamic json = snapshot.value;
-                                  return ToDoEntry(json, index);
+                                  return toDoEntry(json, index, 'Su', currentDate);
                                 },
                               ),
                             ),
@@ -533,6 +534,62 @@ class ToDoListState extends State<ToDoList> {
           ),
         ],
         mainAxisSize: MainAxisSize.max,
+      ),
+    );
+  }
+
+  Widget toDoEntry(Map<String, dynamic> json, int index, String dayKey, DateTime currentDate) {
+    bool isChecked = json["done"] ?? false;
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Colors.blue;
+      }
+      return Colors.red;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 1, top: 5, right: 1, bottom: 2),
+      child: Card(
+        child: ListTile(
+            leading: Checkbox(
+              checkColor: Colors.white,
+              fillColor: MaterialStateProperty.resolveWith(getColor),
+              value: isChecked,
+              onChanged: (bool? value) async {
+                int weekNumber =
+                    ((int.parse(DateFormat('D').format(currentDate)) + 2.5) / 7).round();
+                User? user = FirebaseAuth.instance.currentUser;
+                int year = int.parse(DateFormat('y').format(currentDate));
+                final snapshot = await FirebaseDatabase.instance
+                    .ref()
+                    .child('/${user?.uid}/$year/$weekNumber/$dayKey')
+                    .get();
+                Map<String, dynamic> json1 = snapshot.value as Map<String, dynamic>;
+                setState(() {
+                  isChecked = value!;
+                  if (user != null) {
+                    String key = json1.keys.toList()[index];
+                    FirebaseDatabase.instance
+                        .ref()
+                        .child('/${user.uid}/$year/$weekNumber/$dayKey/$key/done')
+                        .set(isChecked);
+                  }
+                });
+              },
+            ),
+            title: Text(
+              json["message"],
+              style: json['done'] ? const TextStyle(decoration: TextDecoration.lineThrough) : const TextStyle(),
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () {},
+            )),
       ),
     );
   }
@@ -732,11 +789,12 @@ class ToDoDao {
     User? user = FirebaseAuth.instance.currentUser;
     int year = int.parse(DateFormat('y').format(date));
     if (user != null) {
+      Map<String, dynamic> json = {"message": message, "done": false};
       FirebaseDatabase.instance
           .ref()
-          .child('/${user.uid}/$year/$weekNumber/$dayKey')
+          .child('/${user.uid}/$year/$weekNumber/$dayKey/')
           .push()
-          .set(message);
+          .set(json);
     }
   }
 
@@ -748,60 +806,5 @@ class ToDoDao {
       return FirebaseDatabase.instance.ref().child('/${user.uid}/$year/$weekNumber/$dayKey');
     }
     return FirebaseDatabase.instance.ref().child('NullUser');
-  }
-}
-
-// ignore: must_be_immutable
-class ToDoEntry extends StatefulWidget {
-  late String message;
-  late int index;
-  ToDoEntry(this.message, this.index, {Key? key}) : super(key: key);
-
-  @override
-  State<ToDoEntry> createState() => _ToDoEntryState();
-}
-
-class _ToDoEntryState extends State<ToDoEntry> {
-  bool isChecked = false;
-
-  @override
-  Widget build(BuildContext context) {
-    Color getColor(Set<MaterialState> states) {
-      const Set<MaterialState> interactiveStates = <MaterialState>{
-        MaterialState.pressed,
-        MaterialState.hovered,
-        MaterialState.focused,
-      };
-      if (states.any(interactiveStates.contains)) {
-        return Colors.blue;
-      }
-      return Colors.red;
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 1, top: 5, right: 1, bottom: 2),
-      child: Card(
-        child: ListTile(
-          leading: Checkbox(
-
-            checkColor: Colors.white,
-            fillColor: MaterialStateProperty.resolveWith(getColor),
-            value: isChecked,
-            onChanged: (bool? value) {
-              setState(() {
-                isChecked = value!;
-                if(isChecked){
-                }
-              });
-            },
-          ),
-          title: Text(widget.message),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: (){},
-          )
-        ),
-      ),
-    );
   }
 }
