@@ -163,9 +163,9 @@ class ToDoListState extends State<ToDoList> {
                               ),
                               trailing: IconButton(
                                   onPressed: () async {
-                                    String? message = await _showMyDialog();
-                                    if (message != null) {
-                                      widget.toDoDao.saveEntry(currentDate, 'Mo', message);
+                                    String? message = await _showMyDialog() ;
+                                    if (message != null && message.trim().length != 0 && message.trim().length != 0) {
+                                      widget.toDoDao.saveEntry(currentDate, 'Mo', message.trim());
                                     }
                                   },
                                   icon: Icon(
@@ -211,8 +211,8 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    if (message != null) {
-                                      widget.toDoDao.saveEntry(currentDate, 'Tu', message);
+                                    if () {
+                                      widget.toDoDao.saveEntry(currentDate, 'Tu', message.trim());
                                     }
                                   },
                                   icon: Icon(
@@ -258,8 +258,8 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    if (message != null) {
-                                      widget.toDoDao.saveEntry(currentDate, 'We', message);
+                                    if (message != null && message.trim().length != 0) {
+                                      widget.toDoDao.saveEntry(currentDate, 'We', message.trim());
                                     }
                                   },
                                   icon: Icon(
@@ -305,8 +305,8 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    if (message != null) {
-                                      widget.toDoDao.saveEntry(currentDate, 'Im', message);
+                                    if (message != null && message.trim().length != 0) {
+                                      widget.toDoDao.saveEntry(currentDate, 'Im', message.trim());
                                     }
                                   },
                                   icon: Icon(
@@ -360,8 +360,8 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    if (message != null) {
-                                      widget.toDoDao.saveEntry(currentDate, 'Th', message);
+                                    if (message != null && message.trim().length != 0) {
+                                      widget.toDoDao.saveEntry(currentDate, 'Th', message.trim());
                                     }
                                   },
                                   icon: Icon(
@@ -407,8 +407,8 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    if (message != null) {
-                                      widget.toDoDao.saveEntry(currentDate, 'Fr', message);
+                                    if (message != null && message.trim().length != 0) {
+                                      widget.toDoDao.saveEntry(currentDate, 'Fr', message.trim());
                                     }
                                   },
                                   icon: Icon(
@@ -454,8 +454,8 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    if (message != null) {
-                                      widget.toDoDao.saveEntry(currentDate, 'Sa', message);
+                                    if (message != null && message.trim().length != 0) {
+                                      widget.toDoDao.saveEntry(currentDate, 'Sa', message.trim());
                                     }
                                   },
                                   icon: Icon(
@@ -501,8 +501,8 @@ class ToDoListState extends State<ToDoList> {
                               trailing: IconButton(
                                   onPressed: () async {
                                     String? message = await _showMyDialog();
-                                    if (message != null) {
-                                      widget.toDoDao.saveEntry(currentDate, 'Su', message);
+                                    if (message != null && message.trim().length != 0) {
+                                      widget.toDoDao.saveEntry(currentDate, 'Su', message.trim());
                                     }
                                   },
                                   icon: Icon(
